@@ -1,9 +1,27 @@
 require 'csv'
 require 'ffaker'
 
+def schema(id = nil)
+  {
+    id: id,
+    name: FFaker::NameJA.name,
+    email: FFaker::Internet.email,
+    address: FFaker::AddressJA.address,
+    job: FFaker::JobJA.title
+  }
+end
+
+def header
+  schema.keys
+end
+
+def row(id)
+  schema(id).values
+end
+
 CSV.open('tmp/test.csv', 'wb') do |csv|
-  csv << %i[id name email address job]
+  csv << header
   10_000.times do |n|
-    csv << [n, FFaker::NameJA.name, FFaker::Internet.email, FFaker::AddressJA.address, FFaker::JobJA.title]
+    csv << row(n)
   end
 end
