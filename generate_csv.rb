@@ -3,7 +3,7 @@
 require 'csv'
 require 'ffaker'
 
-schema = lambda do |id = nil|
+def schema(id = nil)
   {
     id: id,
     name: FFaker::NameJA.name,
@@ -13,17 +13,17 @@ schema = lambda do |id = nil|
   }
 end
 
-header = lambda do
-  schema.call.keys
+def header
+  schema.keys
 end
 
-row = lambda do |id|
-  schema.call(id).values
+def row(id)
+  schema(id).values
 end
 
 CSV.open('tmp/test.csv', 'wb') do |csv|
-  csv << header.call
+  csv << header
   10_000.times do |n|
-    csv << row.call(n)
+    csv << row(n)
   end
 end
