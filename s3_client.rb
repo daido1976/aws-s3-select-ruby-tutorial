@@ -3,16 +3,20 @@
 require 'aws-sdk-s3'
 require 'csv'
 
-def build_params(bucket, key, ids)
-  query = <<~QUERY
+# 与えられた ids 配列の id で検索し、id と name だけ抽出するクエリを作成する
+def build_query(ids)
+  <<~QUERY
     SELECT
-    s.name
-    , s.id
+    s.id
+    , s.name
     FROM S3Object s
     WHERE s.id
     IN ('#{ids.join("', '")}')
   QUERY
+end
 
+# `#select_object_content` に渡すための parameter を作成する
+def build_params(bucket, key, query)
   {
     bucket: bucket,
     key: key,
@@ -40,7 +44,8 @@ key = 'sample-users'
 # CSV.parse(response.body.read)
 
 # Use #select_object_content (S3 Select)
-params = build_params(bucket, key, [1, 50])
+query = build_query([1, 50])
+params = build_params(bucket, key, query)
 response = s3_client.select_object_content(params)
 
 csv_list = response.payload.select { |p| p.event_type == :records }.map(&:payload).map(&:read)
@@ -49,4 +54,4 @@ csv.map do |row|
   row.map { |r| r.force_encoding('UTF-8') }
 end
 
-puts csv
+p csv
