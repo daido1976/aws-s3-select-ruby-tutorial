@@ -3,6 +3,7 @@
 require 'csv'
 require 'ffaker'
 
+# ffaker を違う値にするためには、毎回 hash を初期化する必要がある
 schema = lambda do |id = nil|
   {
     id: id,
