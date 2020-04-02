@@ -28,7 +28,8 @@ def build_params(bucket, key, query)
     expression_type: 'SQL',
     expression: query,
     input_serialization: {
-      csv: { file_header_info: 'USE', allow_quoted_record_delimiter: true, record_delimiter: "\n" }
+      # field_delimiter を "\t" にすることでタブ区切りのファイルにも対応可能
+      csv: { file_header_info: 'USE', allow_quoted_record_delimiter: true, record_delimiter: "\n", field_delimiter: ',' }
     },
     output_serialization: {
       csv: { record_delimiter: "\n", field_delimiter: ',' }
