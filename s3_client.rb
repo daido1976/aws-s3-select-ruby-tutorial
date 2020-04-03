@@ -15,7 +15,7 @@ def build_query(ids)
   QUERY
 end
 
-# `#select_object_content` に渡すための parameter を作成する
+# `#select_object_content` に渡すパラメータを作成する
 def build_params(bucket, key, query)
   {
     bucket: bucket,
@@ -34,7 +34,7 @@ end
 
 s3_client = Aws::S3::Client.new(region: 'ap-northeast-1')
 bucket = 's3-select-sandbox'
-key = 'sample-users'
+key = 'sample_users.csv'
 
 # Only once execute
 # s3_client.create_bucket(bucket: bucket)

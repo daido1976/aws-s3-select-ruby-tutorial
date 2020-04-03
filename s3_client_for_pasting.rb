@@ -4,8 +4,9 @@ require 'csv'
 s3_client = Aws::S3::Client.new(region: 'ap-northeast-1')
 
 bucket = 's3-select-sample'
-key = 'sample-users'
+key = 'target_sample_users.csv'
 
+# サンプル用のデータを準備する
 s3_client.put_object(bucket: bucket, key: key, body: File.read('sample_users.csv'))
 
 # 与えられた ids 配列の id で検索し、id と name だけ抽出するクエリを作成する
@@ -20,7 +21,7 @@ def build_query(ids)
   QUERY
 end
 
-# `#select_object_content` に渡すための parameter を作成する
+# `#select_object_content` に渡すパラメータを作成する
 def build_params(bucket, key, query)
   {
     bucket: bucket,
@@ -37,11 +38,14 @@ def build_params(bucket, key, query)
   }
 end
 
-# id が 1, 50 の user を検索する
+# id が 1 と 50 のユーザを検索する
 query = build_query([1, 50])
 params = build_params(bucket, key, query)
+
+# S3 Select を使ってレスポンスを取得する
 response = s3_client.select_object_content(params)
 
+# `#event_type == :records` の中にレコード（抽出されたデータ）が含まれる
 csv_list = response.payload.select { |p| p.event_type == :records }.map(&:payload).map(&:read)
 csv = CSV.parse(csv_list.join)
 
